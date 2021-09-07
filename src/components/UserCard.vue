@@ -1,0 +1,93 @@
+<template>
+  <div class="user" :class="{victim: user.isVictim, show: isShown}" @click="showHandler">
+    <div class="user__images">
+      <div class="self">
+        <p>User {{ user.id }}</p>
+        <img :src="`https://avatars.dicebear.com/api/micah/${user.id}.svg`" class="avatar" alt="">
+      </div>
+      <div class="target" v-if="user.target >= 0 && isShown">
+        <img :src="`https://avatars.dicebear.com/api/micah/${user.target}.svg`" class="avatar avatar--target" alt="">
+        <p>{{ user.target ? 'User ' + user.target : 'Вы' }}</p>
+      </div>
+    </div>
+    <button v-if="user.target === 0 && isShown" @click.stop="killHandler" type="button" class="button">Убить</button>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: "UserCard",
+    props: {
+      user: Object,
+      isGameOver: Boolean,
+      murdererTarget: Number,
+      changeTime: Number
+    },
+    data: () => ({
+      timer: null,
+    }),
+    computed: {
+      isShown() {
+        return this.user.id === this.murdererTarget
+      }
+    },
+    methods: {
+      init() {
+        this.$emit('set-target', this.user.id);
+        this.intervalHandler();
+      },
+      intervalHandler() {
+        let randInterval = Math.floor(+(1 + Math.random() * (this.changeTime - 1)).toFixed(3) * 1000);
+        this.timer = setTimeout(() => {
+          this.$emit('set-target', this.user.id);
+          this.destroyTimer();
+          this.intervalHandler();
+        }, randInterval)
+      },
+      destroyTimer() {
+        clearTimeout(this.timer);
+      },
+      killHandler() {
+        this.destroyTimer();
+        this.$emit('kill-user', this.user.id);
+      },
+      showHandler() {
+        this.$emit('show-user', this.user.id);
+      }
+    },
+    mounted() {
+      this.init()
+    },
+    beforeDestroy() {
+      this.destroyTimer();
+    }
+  }
+</script>
+
+<style lang="stylus" scoped>
+  .target
+    margin 38px 0 0
+
+  .user
+    margin 20px
+    padding 15px 0
+    background lightgrey
+    width 250px
+    height 250px
+    text-align center
+    display flex
+    flex-direction column
+    align-items center
+    justify-content space-between
+    cursor pointer
+    &.victim
+      opacity 0.5
+      pointer-events none
+    &.show
+      background lightgreen
+
+  .user__images
+    flex-grow 1
+    display flex
+    justify-content center
+</style>
