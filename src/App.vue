@@ -13,6 +13,7 @@
                  :key="user.id"
                  :is-game-over="isGameOver"
                  :user="user"
+                 :users="users"
                  :change-time="changeTime"
                  :murderer-target="murdererTarget"
                  @set-target="setUserTarget"
@@ -70,7 +71,7 @@
         return this.usersCount - this.activeUsersIds.length + 1
       },
       isGameWin() {
-        return this.activeUsersIds.length === 2
+        return !this.isGameOver && this.activeUsersIds.length === 2
       },
       isGameOver() {
         return !!this.spectators.length
@@ -146,6 +147,7 @@
   .avatar
     width 100px
     height 100px
+    pointer-events none
     &--target
       transform scale(-1, 1)
 

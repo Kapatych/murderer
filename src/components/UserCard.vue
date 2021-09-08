@@ -10,7 +10,16 @@
         <p>{{ user.target ? 'User ' + user.target : 'Вы' }}</p>
       </div>
     </div>
-    <button v-if="user.target === 0 && isShown" @click.stop="killHandler" type="button" class="button">Убить</button>
+    <div class="observers">
+      <div v-if="isShown" class="observers__list">
+        <img v-for="obs in observers" :key="obs.id"
+             :src="`https://avatars.dicebear.com/api/micah/${obs.id}.svg`" class="avatar" alt="">
+      </div>
+
+    </div>
+    <div class="toolbar">
+      <button v-if="user.target === 0 && isShown" @click.stop="killHandler" type="button" class="button">Убить</button>
+    </div>
   </div>
 </template>
 
@@ -19,6 +28,7 @@
     name: "UserCard",
     props: {
       user: Object,
+      users: Object,
       isGameOver: Boolean,
       murdererTarget: Number,
       changeTime: Number
@@ -29,6 +39,9 @@
     computed: {
       isShown() {
         return this.user.id === this.murdererTarget
+      },
+      observers() {
+        return Object.values(this.users).filter(user => user.target === this.user.id)
       }
     },
     methods: {
@@ -73,16 +86,19 @@
     padding 15px 0
     background lightgrey
     width 250px
-    height 250px
+    height 300px
     text-align center
     display flex
     flex-direction column
     align-items center
     justify-content space-between
     cursor pointer
+    user-select none
+
     &.victim
       opacity 0.5
       pointer-events none
+
     &.show
       background lightgreen
 
@@ -90,4 +106,20 @@
     flex-grow 1
     display flex
     justify-content center
+
+  .observers
+    display flex
+    align-items center
+    justify-content center
+    width 100%
+    height 30px
+    margin 0 0 20px
+    .avatar
+      width 30px
+      height 30px
+      margin 5px
+
+  .toolbar
+    height 38px
+    width 100%
 </style>
