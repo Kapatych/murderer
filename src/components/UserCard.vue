@@ -18,7 +18,7 @@
 
     </div>
     <div class="toolbar">
-      <button v-if="user.target === 0 && isShown" @click.stop="killHandler" type="button" class="button">Убить</button>
+      <button v-if="isButtonShown" @click.stop="killHandler" type="button" class="button">Убить</button>
     </div>
   </div>
 </template>
@@ -31,7 +31,8 @@
       users: Object,
       isGameOver: Boolean,
       murdererTarget: Number,
-      changeTime: Number
+      changeTime: Number,
+      killMode: String
     },
     data: () => ({
       timer: null,
@@ -42,6 +43,12 @@
       },
       observers() {
         return Object.values(this.users).filter(user => user.target === this.user.id)
+      },
+      isButtonShown() {
+        if (this.killMode === 'sight') {
+          return this.user.target === 0 && this.isShown
+        }
+        return this.isShown;
       }
     },
     methods: {

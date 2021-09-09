@@ -16,6 +16,7 @@
                  :users="users"
                  :change-time="changeTime"
                  :murderer-target="murdererTarget"
+                 :kill-mode="killMode"
                  @set-target="setUserTarget"
                  @kill-user="killUser"
                  @show-user="showUser"></user-card>
@@ -61,7 +62,8 @@
       changeTime: 3,  //seconds
       activeUsersIds: [],
       spectators: [],
-      murdererTarget: null
+      murdererTarget: null,
+      killMode: 'sight'
     }),
     mounted() {
       this.startNewGame()
@@ -90,6 +92,7 @@
         let url = new URLSearchParams(window.location.search);
         if(url.get('users')) this.usersCount = +url.get('users');
         if(url.get('time')) this.changeTime = +url.get('time');
+        if(url.get('kill')) this.killMode = url.get('kill');
       },
       initUsers() {
         let users = {};
